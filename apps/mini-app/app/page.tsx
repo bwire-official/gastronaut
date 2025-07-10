@@ -18,13 +18,17 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("http://localhost:3001/api/gas/now")
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
+    fetch(`${apiUrl}/api/gas/now`)
       .then((res) => res.json())
       .then((data) => {
         setGasData(data);
         setLoading(false);
       })
-      .catch(() => setLoading(false));
+      .catch((error) => {
+        console.error("Failed to fetch gas data:", error);
+        setLoading(false);
+      });
   }, []);
 
   // Helper to get chain name and color (customize as needed)
