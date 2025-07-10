@@ -1,135 +1,184 @@
-# Turborepo starter
+# GAStronaut 🚀
 
-This Turborepo starter is maintained by the Turborepo core team.
+**Smart Gas Fee Assistant for Crypto Users**
 
-## Using this example
+GAStronaut is a comprehensive gas fee monitoring and intelligence platform that helps crypto users save time and money by making intelligent, data-driven decisions about their on-chain transactions.
 
-Run the following command:
+## 🎯 Mission
 
-```sh
-npx create-turbo@latest
-```
+Our mission is to empower all crypto users to save time and money by making intelligent, data-driven decisions about their on-chain transactions. We do this by providing a smart, intuitive, and personalized gas fee assistant.
 
-## What's inside?
+**Core Principle**: *"Anonymous by Default, Powerful by Choice."* Users receive immediate value without providing any personal data, and can optionally provide more information to unlock hyper-personalized features.
 
-This Turborepo includes the following packages/apps:
+## 🏗️ Architecture
 
-### Apps and Packages
-
-- `docs`: a [Next.js](https://nextjs.org/) app
-- `web`: another [Next.js](https://nextjs.org/) app
-- `@repo/ui`: a stub React component library shared by both `web` and `docs` applications
-- `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
-
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
-
-### Utilities
-
-This Turborepo has some additional tools already setup for you:
-
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
-
-### Build
-
-To build all apps and packages, run the following command:
+This is a **monorepo** built with Turborepo, featuring a decoupled, service-oriented architecture:
 
 ```
-cd my-turborepo
-
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo build
-
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo build
-yarn dlx turbo build
-pnpm exec turbo build
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│   Frontend      │    │   API Service   │    │  Data Ingestion │
+│  (Next.js App)  │◄──►│   (Express)     │◄──►│   (Background)  │
+└─────────────────┘    └─────────────────┘    └─────────────────┘
+                              │
+                              ▼
+                       ┌─────────────────┐
+                       │   PostgreSQL    │
+                       │  (TimescaleDB)  │
+                       └─────────────────┘
 ```
 
-You can build a specific package by using a [filter](https://turborepo.com/docs/crafting-your-repository/running-tasks#using-filters):
+## 📦 What's Inside
 
-```
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo build --filter=docs
+### Apps
+- **`mini-app`**: Next.js frontend application (Telegram Mini App)
+- **`api`**: Express.js backend API service
+- **`docs`**: Documentation site
 
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo build --filter=docs
-yarn exec turbo build --filter=docs
-pnpm exec turbo build --filter=docs
-```
+### Packages
+- **`@repo/ui`**: Shared React component library
+- **`@repo/eslint-config`**: ESLint configurations
+- **`@repo/typescript-config`**: TypeScript configurations
 
-### Develop
+## 🚀 Quick Start
 
-To develop all apps and packages, run the following command:
+### Prerequisites
+- Node.js 18+
+- PostgreSQL database (with TimescaleDB extension recommended)
+- Infura API key
+- Alchemy API key
 
-```
-cd my-turborepo
-
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo dev
-
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo dev
-yarn exec turbo dev
-pnpm exec turbo dev
-```
-
-You can develop a specific package by using a [filter](https://turborepo.com/docs/crafting-your-repository/running-tasks#using-filters):
-
-```
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo dev --filter=web
-
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo dev --filter=web
-yarn exec turbo dev --filter=web
-pnpm exec turbo dev --filter=web
+### 1. Clone and Install
+```bash
+git clone <repository-url>
+cd gastronaut
+npm install
 ```
 
-### Remote Caching
+### 2. Environment Setup
+Create `.env` files in the following locations:
 
-> [!TIP]
-> Vercel Remote Cache is free for all plans. Get started today at [vercel.com](https://vercel.com/signup?/signup?utm_source=remote-cache-sdk&utm_campaign=free_remote_cache).
-
-Turborepo can use a technique known as [Remote Caching](https://turborepo.com/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
-
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup?utm_source=turborepo-examples), then enter the following commands:
-
-```
-cd my-turborepo
-
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo login
-
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo login
-yarn exec turbo login
-pnpm exec turbo login
+**`apps/api/.env`**:
+```env
+DATABASE_URL=your_postgresql_connection_string
+INFURA_API_KEY=your_infura_project_id
+ALCHEMY_API_KEY=your_alchemy_api_key
 ```
 
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
+### 3. Database Setup
+Create the required database table:
+```sql
+CREATE TABLE gas_prices (
+    timestamp TIMESTAMPTZ NOT NULL,
+    chain_id INTEGER NOT NULL,
+    price_slow NUMERIC(10,2),
+    price_average NUMERIC(10,2),
+    price_fast NUMERIC(10,2),
+    PRIMARY KEY (timestamp, chain_id)
+);
+```
 
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
+### 4. Start Development
+```bash
+# Start all services
+npm run dev
+
+# Or start specific services
+npm run dev --filter=api
+npm run dev --filter=mini-app
+```
+
+## 🔧 Development
+
+### Available Scripts
+- `npm run dev` - Start all development servers
+- `npm run build` - Build all applications
+- `npm run lint` - Lint all code
+- `npm run type-check` - Type check all TypeScript
+
+### API Endpoints
+- `GET /api/gas/now` - Get latest gas prices for all chains
+- `GET /` - API health check
+
+### Supported Blockchains
+- Ethereum (ETH)
+- BNB Smart Chain (BNB)
+- Polygon (MATIC)
+- Arbitrum
+- Optimism
+- Avalanche (AVAX)
+- Solana (SOL)
+- Bitcoin (BTC)
+
+## 🏛️ Project Structure
 
 ```
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo link
-
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo link
-yarn exec turbo link
-pnpm exec turbo link
+gastronaut/
+├── apps/
+│   ├── api/                 # Backend API service
+│   │   ├── src/
+│   │   │   ├── config/      # Blockchain configurations
+│   │   │   ├── lib/         # Database connection
+│   │   │   ├── routes/      # API routes
+│   │   │   └── services/    # Data ingestion service
+│   │   └── .env            # API environment variables
+│   ├── mini-app/           # Frontend application
+│   │   ├── app/            # Next.js app directory
+│   │   └── .env.local      # Frontend environment variables
+│   └── docs/               # Documentation site
+├── packages/
+│   ├── ui/                 # Shared UI components
+│   ├── eslint-config/      # ESLint configurations
+│   └── typescript-config/  # TypeScript configurations
+└── turbo.json             # Turborepo configuration
 ```
 
-## Useful Links
+## 🎨 Features
 
-Learn more about the power of Turborepo:
+### Current Features
+- ✅ Real-time gas price monitoring across 8 major blockchains
+- ✅ Professional infrastructure (Infura/Alchemy) for reliable data
+- ✅ RESTful API with CORS support
+- ✅ Background data ingestion service
+- ✅ Interactive web interface
+- ✅ TypeScript throughout the stack
 
-- [Tasks](https://turborepo.com/docs/crafting-your-repository/running-tasks)
-- [Caching](https://turborepo.com/docs/crafting-your-repository/caching)
-- [Remote Caching](https://turborepo.com/docs/core-concepts/remote-caching)
-- [Filtering](https://turborepo.com/docs/crafting-your-repository/running-tasks#using-filters)
-- [Configuration Options](https://turborepo.com/docs/reference/configuration)
-- [CLI Usage](https://turborepo.com/docs/reference/command-line-reference)
+### Planned Features
+- 🔄 Historical gas price charts
+- 🔄 Gas price alerts and notifications
+- 🔄 Predictive gas forecasting
+- 🔄 Personalized insights
+- 🔄 Wallet integration
+- 🔄 Telegram bot integration
+
+## 🛠️ Technology Stack
+
+| Component | Technology | Purpose |
+|-----------|------------|---------|
+| **Monorepo** | Turborepo | Efficient multi-app management |
+| **Frontend** | Next.js + React | Modern, fast web application |
+| **Backend** | Express.js + TypeScript | High-performance API |
+| **Database** | PostgreSQL + TimescaleDB | Time-series data storage |
+| **Infrastructure** | Infura + Alchemy | Professional blockchain access |
+| **Deployment** | Vercel + Render | Scalable cloud hosting |
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🆘 Support
+
+- **Documentation**: Check the `docs` app for detailed guides
+- **Issues**: Report bugs and feature requests via GitHub Issues
+- **Discussions**: Join the conversation in GitHub Discussions
+
+---
+
+**Built with ❤️ for the crypto community**
