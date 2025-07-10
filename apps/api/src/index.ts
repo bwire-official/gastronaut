@@ -6,12 +6,14 @@ import gasRouter from './routes/gas.routes';
 import { startIngestionService } from './services/ingestion.service';
 
 // --- 1. Load Environment Variables ---
-const envPath = path.resolve(process.cwd(), '.env');
-const configResult = dotenv.config({ path: envPath });
+if (process.env.NODE_ENV !== 'production') {
+  const envPath = path.resolve(process.cwd(), '.env');
+  const configResult = dotenv.config({ path: envPath });
 
-if (configResult.error) {
-  console.error('❌ FATAL: Error loading .env file:', configResult.error);
-  process.exit(1);
+  if (configResult.error) {
+    console.error('❌ FATAL: Error loading .env file:', configResult.error);
+    process.exit(1);
+  }
 }
 
 // Check for keys in process.env
